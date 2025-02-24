@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>做我的主人好吗？🐶</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background: #FFF5E6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', cursive;
+            overflow: hidden;
+        }
+
+        /* 小狗容器 */
+        .puppy {
+            position: relative;
+            cursor: pointer;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        /* 柴犬CSS绘画 */
+        .dog {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+        .head {
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            background: #FFB347;
+            border-radius: 50%;
+            box-shadow: -5px 5px 15px rgba(0,0,0,0.1);
+        }
+        .ear {
+            position: absolute;
+            width: 50px;
+            height: 80px;
+            background: #FF9F1C;
+            border-radius: 20px;
+        }
+        .ear.left { transform: rotate(-30deg); left: -20px; }
+        .ear.right { transform: rotate(30deg); right: -20px; }
+        .eye {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background: #333;
+            border-radius: 50%;
+            top: 60px;
+        }
+        .eye.left { left: 40px; }
+        .eye.right { right: 40px; }
+        .nose {
+            position: absolute;
+            width: 30px;
+            height: 20px;
+            background: #664229;
+            border-radius: 40%;
+            top: 100px;
+            left: 85px;
+        }
+        .tongue {
+            position: absolute;
+            width: 30px;
+            height: 40px;
+            background: #FF3366;
+            border-radius: 0 0 15px 15px;
+            top: 130px;
+            left: 85px;
+            transform: scaleY(0);
+            transform-origin: top;
+            transition: 0.3s;
+        }
+
+        /* 动画效果 */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes tail {
+            0% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+            100% { transform: rotate(-10deg); }
+        }
+
+        /* 对话框样式 */
+        .dialog {
+            position: absolute;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255,159,28,0.2);
+            top: -150px;
+            width: 250px;
+            text-align: center;
+            font-size: 20px;
+            color: #FF6B6B;
+            animation: heartbeat 1.5s infinite;
+        }
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* 背景漂浮元素 */
+        .bg-item {
+            position: absolute;
+            opacity: 0.3;
+            animation: drift linear infinite;
+        }
+        .paw { font-size: 30px; }
+        .bone { font-size: 40px; }
+
+        @keyframes drift {
+            from { transform: translateY(-100vh) rotate(0deg); }
+            to { transform: translateY(100vh) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="puppy">
+        <div class="dialog">我可以成为你的小狗吗？🥺</div>
+        <div class="dog">
+            <div class="head">
+                <div class="ear left"></div>
+                <div class="ear right"></div>
+                <div class="eye left"></div>
+                <div class="eye right"></div>
+                <div class="nose"></div>
+                <div class="tongue"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 背景音乐播放器 -->
+    <audio id="bgm" loop>
+        <source src="happybgm.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // 创建背景漂浮元素
+        function createBgItems() {
+            const symbols = ['🐾', '🦴', '🎀'];
+            for(let i=0; i<30; i++) {
+                const item = document.createElement('div');
+                item.className = `bg-item ${Math.random()>0.5?'paw':'bone'}`;
+                item.style.left = Math.random()*100 + '%';
+                item.style.animationDuration = Math.random()*3 + 5 + 's';
+                item.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+                document.body.appendChild(item);
+            }
+        }
+        createBgItems();
+
+        // 小狗点击互动
+        const puppy = document.querySelector('.puppy');
+        const tongue = document.querySelector('.tongue');
+        let isAccepted = false;
+
+        puppy.addEventListener('click', () => {
+            if(!isAccepted) {
+                // 吐舌头动画
+                tongue.style.transform = 'scaleY(1)';
+                // 更新对话框
+                document.querySelector('.dialog').innerHTML = 
+                    '汪汪汪！🏡<br>我会每天陪着你哦！💖';
+                // 开始播放音乐
+                document.getElementById('bgm').play();
+                // 添加持续动画
+                puppy.style.animation = 'tail 0.5s infinite';
+                isAccepted = true;
+            } else {
+                // 切换开心状态
+                tongue.style.transform = tongue.style.transform === 'scaleY(1)' ? 
+                    'scaleY(0)' : 'scaleY(1)';
+            }
+        });
+
+        // 自动摇尾巴
+        setInterval(() => {
+            if(isAccepted) {
+                puppy.style.transform = `rotate(${Math.sin(Date.now()/200)*5}deg)`;
+            }
+        }, 50);
+    </script>
+</body>
+</html>
